@@ -1,8 +1,9 @@
 # Backend API
 fastapi==0.115.*
 uvicorn[standard]==0.34.*
+python-multipart==0.0.9
 
-# UI
+# Ui
 streamlit==1.54.0
 
 # Gemini AI
