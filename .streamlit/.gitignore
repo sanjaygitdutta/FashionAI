@@ -1,0 +1,24 @@
+# 🔐 Environment variables (SECRET)
+.env
+
+# 🐍 Python cache
+__pycache__/
+*.pyc
+
+# 🧪 Virtual environment (optional)
+venv/
+.env/
+.venv/
+
+# 🖥️ OS / Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 🧪 Streamlit cache
+.streamlit/secrets.toml
+
+# 🔑 Credentials
+credentials.json.jsons
+

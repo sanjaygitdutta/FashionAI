@@ -1,0 +1,13 @@
+# Web Framework & Server
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+
+# Google AI & Services
+google-genai>=0.8.0
+google-api-python-client==2.189.0
+google-auth-httplib2==0.3.0
+google-auth-oauthlib==1.2.4
+
+# Utilities
+requests==2.32.*
+python-dotenv==1.0.*
