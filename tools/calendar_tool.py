@@ -5,17 +5,17 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-#read-only calender access
+# read-only calendar access
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 def get_calendar_events() -> dict:
     """
     Fetch the next 5 upcoming events from the user's Google Calendar.
-    Used by gemini to understand the user's sechedule context.
+    Used by Gemini to understand the user's schedule context.
     """
     creds = None
 
-    # load exiting token if available
+    # load existing token if available
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
 
@@ -24,17 +24,23 @@ def get_calendar_events() -> dict:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            # WARNING: This requires credentials.json to be in your root folder
+            if not os.path.exists("credentials.json"):
+                return {"success": False, "error": "credentials.json file not found."}
+                
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+            # This opens a local browser for the first-time login
             creds = flow.run_local_server(port=0)
 
-    # save the credentials for future use
-    with open("token.json", "w") as token:
-        token.write(creds.to_json())
+        # save the credentials for future use
+        with open("token.json", "w") as token:
+            token.write(creds.to_json())
 
     try:
         service = build("calendar", "v3", credentials=creds)
 
-        now = datetime.datetime.utcnow().isoformat() + "Z"
+        # Fixed: Using timezone-aware UTC now for 2026 standards
+        now = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         events_result = service.events().list(
             calendarId="primary",
@@ -47,7 +53,7 @@ def get_calendar_events() -> dict:
         events = events_result.get("items", [])
         
         if not events:
-            return{
+            return {
                 "success": True,
                 "events": [],
                 "message": "No upcoming events found."
@@ -62,17 +68,17 @@ def get_calendar_events() -> dict:
                 "location": event.get("location", "Not specified")
             })
 
-        return{
+        return {
             "success": True,
             "events": formatted_events
         }
     except Exception as e:
-        return{
+        return {
             "success": False,
             "error": f"Calendar API error: {str(e)}"
         }
-   
-#independent testing
+
+# independent testing
 if __name__ == "__main__":
     print("Fetching upcoming calendar events...")
     print(get_calendar_events())
