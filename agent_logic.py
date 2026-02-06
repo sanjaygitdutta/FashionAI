@@ -1,13 +1,14 @@
+import streamlit as st
 from google import genai
 from google.genai import types
 from tools.weather_tool import get_weather_tool
 from tools.calendar_tool import get_calendar_events
 
 def run_fashion_agent(
-        user_prompt: str,
-        image_data: dict,
-        client: genai.Client
-    ) -> str:
+    user_prompt: str,
+    image_data: dict,
+    client: genai.Client
+) -> str:
     """
     Core agentic reasoning loop for AI Fashion Stylist.
     Uses:
@@ -107,15 +108,19 @@ def run_fashion_agent(
             )
             return final_text or "No final recommendation generated."
 
-        # Execute tools
+        # Execute tools (Fixed Indentation: This must be inside the for _ in range loop)
         tool_parts = []
         for fc in tool_calls:
-            if fc.name == "get_weather_tool":
-                result = get_weather_tool(**fc.args)
-            elif fc.name == "get_calendar_events":
-                result = get_calendar_events()
-            else:
-                result = {"error": "Unknown tool"}
+            # Add a small UI indicator for the specific tool
+            with st.status(f"🛠️ Agent using: {fc.name}...", expanded=False):
+                if fc.name == "get_weather_tool":
+                    result = get_weather_tool(**fc.args)
+                    st.write(f"**Weather data received:**", result) 
+                elif fc.name == "get_calendar_events":
+                    result = get_calendar_events()
+                    st.write(f"**Calendar data received:**", result)
+                else:
+                    result = {"error": "Unknown tool"}
 
             tool_parts.append(
                 types.Part.from_function_response(
