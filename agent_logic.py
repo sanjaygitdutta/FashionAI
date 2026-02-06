@@ -66,8 +66,7 @@ def run_fashion_agent(
             role="user",
             parts=[
                 types.Part.from_text(
-                    f"Vision Data: {image_data}\n"
-                    f"User Request: {user_prompt}"
+                    f"Vision Data: {image_data}\nUser Request: {user_prompt}"
                 )   
             ]
         )  
