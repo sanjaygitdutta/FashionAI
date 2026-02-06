@@ -27,12 +27,12 @@ app = FastAPI(
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
-# --- 1. SCHEMAS ---
+# 1. SCHEMAS
 class StyleRequest(BaseModel):
     city: str
     occasion: str
 
-# --- 2. TOOL DECLARATIONS ---
+# 2. TOOL DECLARATIONS 
 weather_tool = types.Tool(
     function_declarations=[
         types.FunctionDeclaration(
@@ -57,7 +57,7 @@ calendar_tool = types.Tool(
     ]
 )
 
-# --- 3. THE CORE AGENT LOGIC ---
+# 3. THE CORE AGENT LOGIC 
 async def run_fashion_agent(city: str, occasion: str, image_bytes: bytes, mime_type: str):
     """Executes the agentic loop with tool usage and vision analysis."""
     messages = [
@@ -116,7 +116,7 @@ async def run_fashion_agent(city: str, occasion: str, image_bytes: bytes, mime_t
 
     return "".join([p.text for p in response.candidates[0].content.parts if p.text])
 
-# --- 4. ENDPOINTS ---
+#  4. ENDPOINTS 
 
 @app.post("/recommend")
 async def get_style(
