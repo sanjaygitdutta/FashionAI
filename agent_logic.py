@@ -23,6 +23,7 @@ def run_fashion_agent(
         "- ALWAYS check weather and calendar before answering\n"
         "- If a formal meeting exists, prioritize professional outfits\n"
         "- Be concise, stylish, and explain your reasoning clearly"
+        "- Always mention specific items found in the vision data and explain how they relate to the weather and calendar events found."
     )
 
     # Tool declarations
