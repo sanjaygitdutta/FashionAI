@@ -1,19 +1,33 @@
-# Backend API
-fastapi==0.115.*
-uvicorn[standard]==0.34.*
-python-multipart==0.0.9
-
-# Ui
-streamlit==1.54.0
-
-# Gemini AI
+# --- Gemini 3 Core AI ---
+# Supports Multimodal, Agentic Tools, and Google Search Grounding
 google-genai==1.62.0
 
-# Utilities
-python-dotenv==1.2.0
-requests==2.32.3
+# --- Backend API (FastAPI Stack) ---
+fastapi==0.115.8
+uvicorn[standard]==0.34.0
+python-multipart==0.0.9
 
-# Google APIs
+# --- Frontend UI ---
+streamlit==1.54.0
+audio-recorder-streamlit==0.0.10
+
+# --- Voice & Audio Features ---
+# For converting AI text responses into MP3 audio
+gTTS==2.5.4
+# For playing/processing audio files
+pygame==2.6.1
+
+# --- Utilities & Grounding Tools ---
+# This is the "messenger" that talks to OpenWeatherMap
+requests==2.32.3
+# This is what reads your API key from the .env file
+python-dotenv==1.2.0
+# Essential for image processing before sending to Gemini
+Pillow==10.4.0
+# Useful if your agent needs to scrape specific web content
+beautifulsoup4==4.12.3
+
+# --- Google APIs (Calendar & Auth) ---
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
