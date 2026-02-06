@@ -62,10 +62,10 @@ def analyze_outfit_vision(
               types.Content(
                  role="user",
                  parts=[
-                     types.Part.from_text(prompt),
+                     types.Part.from_text(text="List the clothing items, colors, and formal level. Return as JSON."),
                      types.Part.from_bytes(
                          data=image_bytes,
-                         mime_type=mime_type,
+                         mime_type="image/jpeg",
                          media_resolution=types.MediaResolution.MEDIA_RESOLUTION_HIGH 
                      )
                  ] 
