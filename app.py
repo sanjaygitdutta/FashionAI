@@ -1,7 +1,9 @@
 import streamlit as st
 import os
 import io
+import json
 from google import genai
+from google.genai import types
 from gtts import gTTS 
 from services.vision_services import analyze_outfit_vision
 from agent_logic import run_fashion_agent
@@ -14,26 +16,22 @@ st.write("Upload a photo or use your camera to let the AI stylist check your out
 # 2. Sidebar – API Key
 with st.sidebar:
     st.header("🔑 Settings")
-    # Tip: In a real demo, leave this blank so the judges see you enter a key!
-    api_key = st.text_input("Enter Gemini API Key", type="password", value="AIzaSyBKTv1PJSOTk7kLaE3R4pjmar-uOqbZGfg")
+    # Tip: For a hackathon, leave the default blank or use st.secrets
+    api_key = st.text_input("Enter Gemini API Key", type="password", value="YOUR_API_KEY_HERE")
 
     if api_key:
         os.environ["GOOGLE_API_KEY"] = api_key
 
-# 3. Inputs (Webcam + Upload Merged)
+# 3. Inputs (Webcam + Upload)
 st.write("### 📸 Step 1: Provide your outfit")
 tab1, tab2 = st.tabs(["📁 Upload Image", "📷 Use Webcam"])
 
 with tab1:
-    uploaded_file = st.file_uploader(
-        "Upload your outfit photo",
-        type=["jpg", "jpeg", "png"]
-    )
+    uploaded_file = st.file_uploader("Upload your outfit photo", type=["jpg", "jpeg", "png"])
 
 with tab2:
     camera_file = st.camera_input("Take a photo of your outfit")
 
-# Prioritize webcam photo if taken, else use upload
 input_image = camera_file if camera_file else uploaded_file
 
 user_query = st.text_input(
@@ -47,7 +45,6 @@ if input_image:
         st.sidebar.error("⚠️ API Key required!")
         st.stop()
 
-    # Center the preview
     st.image(input_image, caption="Current Outfit Selection", use_container_width=True)
 
     if st.button("✨ Get Expert Advice", use_container_width=True):
@@ -56,7 +53,7 @@ if input_image:
             image_bytes = input_image.getvalue()
             mime_type = input_image.type
 
-            # STEP 1 & 2: Processing via Status Container
+            # STEP 1 & 2: Processing
             with st.status("🧠 Agent at work...", expanded=True) as status:
                 st.write("👁️ Analyzing clothing details...")
                 vision_results = analyze_outfit_vision(
@@ -66,31 +63,60 @@ if input_image:
                 )
                 
                 st.write("📅 Checking context (Weather/Calendar)...")
-                final_recommendation = run_fashion_agent(
+                response_text = run_fashion_agent(
                     user_prompt=user_query or "Give me general styling advice",
                     image_data=vision_results,
                     client=client
                 )
                 status.update(label="✅ Advice Ready!", state="complete", expanded=False)
 
-            # --- RESULTS UI ---
+            # --- PARSE STRUCTURED JSON RESULTS ---
             st.divider()
-            st.subheader("🧥 Stylist Recommendation")
-            st.markdown(final_recommendation)
+            try:
+                data = json.loads(response_text)
+                
+                # Winner Badge
+                st.balloons()
+                st.success(f"🏆 **Winner: {data['winner']}**")
+                
+                # Why it wins
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    st.write("### Why this wins:")
+                    for r in data['reason']:
+                        st.write(f"✅ {r}")
+                
+                with col2:
+                    st.write("### ⚖️ Tradeoffs")
+                    st.json(data['tradeoffs'])
 
-            # STEP 4: Voice Output
+                # Final Written Recommendation
+                st.info(data['final_recommendation'])
+
+                # Voice summary (reads the final recommendation)
+                tts_text = data['final_recommendation']
+
+            except json.JSONDecodeError:
+                # Fallback if AI skips JSON format
+                st.subheader("🧥 Stylist Recommendation")
+                st.markdown(response_text)
+                tts_text = response_text
+
+            # --- VOICE OUTPUT ---
             try:
                 with st.spinner("🔊 Generating voice summary..."):
-                    tts = gTTS(text=final_recommendation, lang='en')
+                    tts = gTTS(text=tts_text, lang='en')
                     audio_fp = io.BytesIO()
                     tts.write_to_fp(audio_fp)
-                    # Use container width for a cleaner player look
                     st.audio(audio_fp, format="audio/mp3", autoplay=True)
             except Exception:
-                st.info("Note: Audio summary unavailable, but recommendation is ready above.")
+                st.info("Note: Audio summary unavailable.")
 
-            # Details expander for transparency
+            # Details expander for technical transparency
             with st.expander("🔍 View AI Reasoning Details"):
+                st.write("**Visual Observations:**")
+                if 'data' in locals():
+                    st.write(", ".join(data['visual_observations']))
                 st.json(vision_results)
 
         except Exception as e:
