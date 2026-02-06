@@ -1,133 +1,64 @@
-👗 AI Fashion Stylist (Gemini 3)
+👗 Gemini 3 Smart Fashion Stylist
+An advanced, context-aware AI Agent that acts as a personal fashion consultant. This project goes beyond simple chat by fusing Computer Vision, Real-time Weather Grounding, Schedule Awareness, and Voice Interactivity.
 
-An AI-powered personal fashion stylist that analyzes your outfit image, checks real-time weather and your calendar, and gives smart, contextual outfit recommendations using Gemini 3.
+🧠 The "Gemini 3" Advantage
+This application leverages the latest 2026 capabilities of the Gemini 3 model series:
 
-Built with:
+Reasoning-First Agent: Uses thinking_level="high" to evaluate outfit suitability based on environmental factors before responding.
 
-🧠 Gemini 3 (Vision + Agentic Reasoning)
+Multimodal Fusion: Analyzes user-uploaded images via gemini-3-flash to identify specific clothing items, textures, and styles.
 
-🌦️ Weather API
+Built-in Grounding: Utilizes Google Search grounding to suggest current fashion trends and retail availability.
 
-📅 Calendar integration
+✨ Key Features
+🔍 Vision Analysis: Automatically detects clothing items from your photos.
 
-🎨 Streamlit frontend
+🌦️ Weather Integration: Calls the OpenWeatherMap API to ensure your outfit matches the local forecast (temp, rain, humidity).
 
-⚙️ Modular, production-ready architecture
+📅 Calendar Sync: Integrates with Google Calendar to understand your day's "vibe" (e.g., Formal Meeting vs. Casual Coffee).
 
-✨ Features
+🎙️ Voice & Audio: Support for voice-to-text input and natural AI-generated audio responses using gTTS.
 
-Upload your outfit photo 📸
+🚀 Performance: Dual-service architecture using FastAPI for high-speed logic and Streamlit for a reactive UI.
 
-AI analyzes clothing, fabric, colors & style
-
-Automatically checks:
-
-Weather conditions 🌦️
-
-Calendar events (meetings, outings) 📅
-
-Personalized fashion advice based on:
-
-Occasion
-
-Climate
-
-Formal / casual needs
-
-Clean UI with Streamlit
-
-🗂️ Project Structure
-fashion_agent_project/
-├── .streamlit/
-│   └── config.toml
-├── .env
-├── .gitignore
-├── requirements.txt
-├── README.md
-│
-├── app.py              # Streamlit UI (ENTRY POINT)
-├── agent_logic.py      # Core Gemini agent logic
-│
-├── services/
-│   ├── __init__.py
-│   └── vision_services.py
-│
-└── tools/
-    ├── __init__.py
-    ├── weather_tool.py
-    └── calendar_tool.py
-
-🔐 Environment Variables
-
-Create a .env file in the root folder:
-
-GOOGLE_API_KEY=your_gemini_api_key_here
-WEATHER_API_KEY=your_openweather_api_key_here
-
-
-⚠️ Never commit .env to GitHub
-
-📦 Installation
-1️⃣ Create virtual environment
-python -m venv venv
-venv\Scripts\activate   # Windows
-
-2️⃣ Install dependencies
+🛠️ Project Architecture
+Plaintext
+├── app.py              # Reactive Streamlit Frontend (Voice/Vision UI)
+├── main.py             # FastAPI Backend (Agent Orchestrator)
+├── agent_logic.py      # Core Gemini 3 Reasoning & Tool Execution Loop
+├── vision_services.py  # Image processing logic
+├── requirements.txt    # Project dependencies
+└── tools/              # Modular Agent Tools
+    ├── weather_tool.py # OpenWeatherMap API Integration
+    └── calendar_tool.py# Google Calendar API Integration
+🚀 Setup & Installation
+1. Clone the Repository
+Bash
+git clone <your-repo-url>
+cd fashion-stylist-agent
+2. Install Dependencies
+Bash
 pip install -r requirements.txt
+3. Environment Configuration
+Create a .env file in the root directory and add your keys:
 
-▶️ Run the Application
+Code snippet
+GOOGLE_API_KEY=your_gemini_key
+WEATHER_API_KEY=your_openweathermap_key # From https://home.openweathermap.org/
+4. Run the Application
+Bash
+# Start the Backend
+uvicorn main:app --reload
 
-Start the Streamlit app:
-
+# Start the Frontend (New Terminal)
 streamlit run app.py
+🌦️ Data Grounding Logic
+The agent doesn't guess—it verifies. When a user asks "What should I wear?", the agent:
 
+Calls get_weather_tool to check the Real-time Weather.
 
-Then open in browser:
+Calls get_calendar_events to check the User's Schedule.
 
-http://localhost:8501
+Cross-references these data points with the Vision Data from the outfit photo to provide a final, grounded recommendation.
 
-🧠 How It Works
-
-User uploads an outfit image
-
-Vision Service
-
-Detects clothes, colors, fabric & style
-
-Agent Logic
-
-Calls weather tool
-
-Calls calendar tool
-
-Uses Gemini 3 reasoning loop
-
-Final Recommendation
-
-Context-aware outfit advice
-
-🛡️ Security Notes
-
-API keys are entered securely in sidebar or .env
-
-.gitignore blocks secrets
-
-OAuth tokens stored locally (calendar)
-
-🚀 Future Improvements
-
-Outfit history & wardrobe tracking
-
-Voice input
-
-E-commerce outfit links
-
-Mobile version
-
-Multi-language support
-
-🧑‍💻 Author
-
-Sanjay Dutta
-email-sanjoydutta1200@gmail.com
-Built for learning, innovation & real-world deployment.
+Developed for the 2026 Gemini 3 Developer Hackathon.
