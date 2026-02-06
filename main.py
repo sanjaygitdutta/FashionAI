@@ -24,7 +24,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-client = genai.Client(api_key=GEMINI_KEY)
+client = genai.Client(api_key="AIzaSyBKTv1PJSOTk7kLaE3R4pjmar-uOqbZGfg")
 
 # --- 1. SCHEMAS ---
 class StyleRequest(BaseModel):
