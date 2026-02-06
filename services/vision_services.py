@@ -3,7 +3,7 @@ from google import genai
 from google.genai import types
 
 # 1. Response Schema: Defines the exact structure the AI must follow
-# This ensures your app.py can always find 'detected_items', 'style_vibe', etc.
+# This ensures your agent_logic.py can always find 'detected_items', etc.
 RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -27,7 +27,6 @@ RESPONSE_SCHEMA = {
     "additionalProperties": False
 }
 
-# 2. Vision Analysis Function
 def analyze_outfit_vision(
         image_bytes: bytes,
         mime_type: str,
@@ -41,6 +40,7 @@ def analyze_outfit_vision(
     prompt = (
         "Analyze this fashion image with expert precision. "
         "Identify items, fabric weight, colors, and style vibe. "
+        "Focus on textures and patterns. "
         "Return the results in the requested JSON format."
     )
 
@@ -56,7 +56,7 @@ def analyze_outfit_vision(
                         types.Part.from_bytes(
                             data=image_bytes,
                             mime_type=mime_type,
-                            # Use high resolution to ensure patterns and textures are detected
+                            # Ensures patterns and textures are detected clearly
                             media_resolution="media_resolution_high" 
                         )
                     ] 
@@ -68,17 +68,20 @@ def analyze_outfit_vision(
                 # Gemini 3 Specific: Thinking configuration
                 thinking_config=types.ThinkingConfig(
                     include_thoughts=True,
-                    thinking_level="medium" # Balanced level for fast but accurate vision
+                    thinking_level="medium" 
                 )
-            )  
+            )   
         )
 
-        # Safety check: ensure response text exists
         if not response.text:
             return {"error": "Vision analysis failed: no response text received."}
 
-        # Use strip() to clean any accidental whitespace from the API response
-        return json.loads(response.text.strip())
+        # Parse the JSON response
+        vision_data = json.loads(response.text.strip())
+        
+        # We return the full vision_data dictionary so agent_logic.py
+        # can use it in json.dumps(image_data)
+        return vision_data
     
     except json.JSONDecodeError:
         return {"error": "The model produced an invalid JSON format."}
