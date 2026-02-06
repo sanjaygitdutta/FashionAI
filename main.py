@@ -58,7 +58,7 @@ async def auto_recommend(city: str, image: UploadFile = File(...)):
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=f"I am in {city}. what should i wear today?"),
+                types.Part(text=f"I am in {city}. what should i wear today?"),
                 types.Part.from_bytes(data=image_bytes, mime_type=image.content_type)
             ]
         )

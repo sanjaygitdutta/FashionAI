@@ -52,7 +52,7 @@ def analyze_outfit_vision(
                 types.Content(
                     role="user",
                     parts=[
-                        types.Part.from_text(text=prompt),
+                        types.Part(text=prompt),
                         types.Part.from_bytes(
                             data=image_bytes,
                             mime_type=mime_type,
