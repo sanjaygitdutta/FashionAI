@@ -70,7 +70,7 @@ if input_image:
                 )
                 status.update(label="✅ Advice Ready!", state="complete", expanded=False)
 
-            # --- PARSE STRUCTURED JSON RESULTS ---
+            #  PARSE STRUCTURED JSON RESULTS 
             st.divider()
             try:
                 data = json.loads(response_text)
@@ -102,7 +102,7 @@ if input_image:
                 st.markdown(response_text)
                 tts_text = response_text
 
-            # --- VOICE OUTPUT ---
+            # VOICE OUTPUT 
             try:
                 with st.spinner("🔊 Generating voice summary..."):
                     tts = gTTS(text=tts_text, lang='en')
