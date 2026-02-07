@@ -1,5 +1,8 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import io
 import json
 from google import genai
@@ -17,7 +20,8 @@ st.write("Upload a photo or use your camera to let the AI stylist check your out
 with st.sidebar:
     st.header("🔑 Settings")
     # Tip: For a hackathon, leave the default blank or use st.secrets
-    api_key = st.text_input("Enter Gemini API Key", type="password", value="YOUR_API_KEY_HERE")
+    default_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    api_key = st.text_input("Enter Gemini API Key", type="password", value=default_key if default_key else "")
 
     if api_key:
         os.environ["GOOGLE_API_KEY"] = api_key
