@@ -26,6 +26,28 @@ with st.sidebar:
     if api_key:
         os.environ["GOOGLE_API_KEY"] = api_key
 
+    st.divider()
+    
+    # Model Switcher
+    model_option = st.selectbox(
+        "🧠 Select Model",
+        options=["gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-3-pro-preview"],
+        index=0, # Verified to work with user's quota
+        help="Use 'flash-lite' for the most reliable free access."
+    )
+
+    # Map the selection to vision model
+    if model_option == "gemini-3-pro-preview":
+        vision_model = "gemini-3-flash-preview"
+        agent_model = "gemini-3-pro-preview"
+    elif model_option == "gemini-2.0-flash":
+        vision_model = "gemini-2.0-flash"
+        agent_model = "gemini-2.0-flash"
+    else:
+        vision_model = "gemini-2.5-flash-lite"
+        agent_model = "gemini-2.5-flash-lite"
+
+
 # 3. Inputs (Webcam + Upload)
 st.write("### 📸 Step 1: Provide your outfit")
 tab1, tab2 = st.tabs(["📁 Upload Image", "📷 Use Webcam"])
@@ -63,14 +85,16 @@ if input_image:
                 vision_results = analyze_outfit_vision(
                     image_bytes=image_bytes,
                     mime_type=mime_type,
-                    client=client
+                    client=client,
+                    model_id=vision_model
                 )
                 
                 st.write("📅 Checking context (Weather/Calendar)...")
                 response_text = run_fashion_agent(
                     user_prompt=user_query or "Give me general styling advice",
                     image_data=vision_results,
-                    client=client
+                    client=client,
+                    model_id=agent_model
                 )
                 status.update(label="✅ Advice Ready!", state="complete", expanded=False)
 

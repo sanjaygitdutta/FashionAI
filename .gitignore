@@ -23,3 +23,12 @@ Thumbs.db
 
 #testkey
 test_key.py
+
+# 🐛 Temporary Debug Scripts
+list_models_debug.py
+models_debug.json
+models_list.txt
+probe_quota.py
+test_api_versions.py
+test_lite_models.py
+test_models_direct.py

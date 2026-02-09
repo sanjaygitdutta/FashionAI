@@ -30,7 +30,8 @@ RESPONSE_SCHEMA = {
 def analyze_outfit_vision(
         image_bytes: bytes,
         mime_type: str,
-        client: genai.Client
+        client: genai.Client,
+        model_id: str = "gemini-2.5-flash-lite"
 ) -> dict:
     """
     Uses Gemini 3 Flash to extract structured fashion intelligence from an image.
@@ -45,9 +46,9 @@ def analyze_outfit_vision(
     )
 
     try:
-        # Calling the Gemini 3 Flash Preview model
+        # Calling the Gemini model dynamically
         response = client.models.generate_content(
-            model="gemini-3-flash-preview", 
+            model=model_id, 
             contents=[
                 types.Content(
                     role="user",
@@ -65,11 +66,11 @@ def analyze_outfit_vision(
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 response_schema=RESPONSE_SCHEMA,
-                # Gemini 3 Specific: Thinking configuration
+                # Only Gemini 3 models or Thinking models support thinking_config
                 thinking_config=types.ThinkingConfig(
                     include_thoughts=True,
                     thinking_level="medium" 
-                )
+                ) if "gemini-3" in model_id or "thinking" in model_id else None
             )   
         )
 
